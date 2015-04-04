@@ -27,6 +27,10 @@ var mainBowerFiles = require('main-bower-files');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 
+var rename = require("gulp-rename");
+var iconfont = require('gulp-iconfont');
+var consolidate = require('gulp-consolidate');
+
 
 /*
    Private Tasks
@@ -110,6 +114,35 @@ gulp.task('bower', function() {
 		.pipe(gulp.dest('public/styles/vendor'));
 });
 
+gulp.task('iconfont', function() {
+	var fontName = 'myfont';
+
+	gulp.src(['images/fonts/*.svg'])
+		.pipe(iconfont({
+			fontName: fontName, // required
+			appendCodepoints: true // recommended option
+		}))
+		.on('codepoints', function(codepoints, options) {
+			var options = {
+				glyphs: codepoints,
+				fontName: fontName,
+				fontPath: '../fonts/'+fontName+'/',
+				className: 'icon'
+			};
+
+			gulp.src('styles/partials/font-template.css')
+				.pipe(consolidate('lodash', options))
+				.pipe(rename({ basename:fontName }))
+				.pipe(gulp.dest('styles/partials/'));
+
+			// if you don't need sample.html, remove next 4 lines
+			gulp.src('icon-font-render-tmpl.html')
+				.pipe(consolidate('lodash', options))
+				.pipe(rename({ basename:fontName }))
+				.pipe(gulp.dest('./')); // set path to export your sample HTML
+		})
+		.pipe(gulp.dest('public/fonts/'+fontName));
+});
 
 gulp.task('watch', function() {
 	browserSync({
@@ -135,6 +168,7 @@ gulp.task('default', [
 	'watch',
 	'bower',
 	'scripts',
+	'iconfont',
 	'less',
 	'handlebars'
 ]);

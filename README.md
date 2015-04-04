@@ -19,7 +19,7 @@ Open the terminal and navigate to the project folder.
 Navigate to the bower_components handlebars folder in terminal.  bower_components/handlebars.  Type in these commands to build the handlebars libs
 ```console
     npm install
-	grunt
+	gulp
 ```
 ##Usage
 
